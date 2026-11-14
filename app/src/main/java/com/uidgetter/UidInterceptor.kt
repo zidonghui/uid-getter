@@ -5,6 +5,7 @@ import top.sankokomi.wirebare.kernel.interceptor.http.async.AsyncHttpIndexedInte
 import top.sankokomi.wirebare.kernel.interceptor.http.async.AsyncHttpInterceptChain
 import top.sankokomi.wirebare.kernel.interceptor.http.async.AsyncHttpInterceptor
 import top.sankokomi.wirebare.kernel.interceptor.http.async.AsyncHttpInterceptorFactory
+import top.sankokomi.wirebare.kernel.util.uncompressGzip
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -78,6 +79,11 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
             runCatching {
                 var body = bos.toByteArray()
                 body = dechunk(body)
+                // gzip 解压
+                val encoding = session.response.contentEncoding.orEmpty().lowercase()
+                if (encoding.contains("gzip")) {
+                    body = runCatching { body.uncompressGzip() }.getOrDefault(body)
+                }
                 val text = body.toString(Charsets.UTF_8)
                 // 记录原始响应体（调试用）
                 UidState.lastRawBody.value = text.take(500)
