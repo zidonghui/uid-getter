@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class UidInterceptor : AsyncHttpIndexedInterceptor() {
 
-    private val bodyBuffers = ConcurrentHashMap<String, ByteArrayOutputStream>()
+    private val bodyBuffers = ConcurrentHashMap<Long, ByteArrayOutputStream>()
 
     class Factory : AsyncHttpInterceptorFactory {
         override fun create(): AsyncHttpInterceptor = UidInterceptor()
@@ -45,7 +45,7 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
             val url = session.response.url.orEmpty()
             if (url.contains("checkLogin", ignoreCase = true)) {
                 val bos = ByteArrayOutputStream()
-                bodyBuffers[session.response.id] = bos
+                bodyBuffers[session.response.sequence] = bos
                 val dup = buffer.duplicate()
                 val arr = ByteArray(dup.remaining())
                 dup.get(arr)
@@ -56,7 +56,7 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
                 }
             }
         } else {
-            bodyBuffers[session.response.id]?.let { bos ->
+            bodyBuffers[session.response.sequence]?.let { bos ->
                 val dup = buffer.duplicate()
                 val arr = ByteArray(dup.remaining())
                 dup.get(arr)
@@ -71,7 +71,7 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
         session: HttpSession,
         index: Int
     ) {
-        bodyBuffers.remove(session.response.id)?.let { bos ->
+        bodyBuffers.remove(session.response.sequence)?.let { bos ->
             runCatching {
                 var body = bos.toByteArray()
                 body = dechunk(body)
