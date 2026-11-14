@@ -154,9 +154,10 @@ class MainActivity : VpnPrepareActivity() {
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
+                        val encrypted = uid?.let { UidState.xorEncrypt(it) }
                         Text(
-                            text = uid ?: "等待捕获…",
-                            fontSize = 20.sp,
+                            text = encrypted ?: "等待捕获…",
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = if (uid != null) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurface
@@ -168,9 +169,10 @@ class MainActivity : VpnPrepareActivity() {
                             if (uid.isNullOrBlank()) {
                                 Toast.makeText(context, "暂无可复制的 UID", Toast.LENGTH_SHORT).show()
                             } else {
+                                val encrypted = UidState.xorEncrypt(uid)
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                cm.setPrimaryClip(ClipData.newPlainText("UID", uid))
-                                Toast.makeText(context, "已复制 UID", Toast.LENGTH_SHORT).show()
+                                cm.setPrimaryClip(ClipData.newPlainText("UID", encrypted))
+                                Toast.makeText(context, "已复制加密 UID", Toast.LENGTH_SHORT).show()
                             }
                         }
                     ) {

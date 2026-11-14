@@ -7,9 +7,17 @@ import kotlinx.coroutines.flow.asStateFlow
 object UidState {
     val uid = MutableStateFlow<String?>(null)
 
-    /** 调试：最近拦截到的任意响应 URL */
-    val lastUrl = MutableStateFlow<String?>(null)
+    /** XOR 加密密钥（可自行修改） */
+    private const val XOR_KEY = "GameAssist2026"
 
-    /** 调试：最近一次匹配 checkLogin 的原始响应体 */
-    val lastRawBody = MutableStateFlow<String?>(null)
+    /** 异或加密字符串，返回 Base64 可读结果 */
+    fun xorEncrypt(input: String): String {
+        if (input.isEmpty()) return ""
+        val key = XOR_KEY.toByteArray()
+        val data = input.toByteArray()
+        val out = ByteArray(data.size) { i ->
+            (data[i].toInt() xor key[i % key.size].toInt()).toByte()
+        }
+        return android.util.Base64.encodeToString(out, android.util.Base64.NO_WRAP)
+    }
 }
