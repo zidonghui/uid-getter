@@ -110,7 +110,7 @@ class MainActivity : VpnPrepareActivity() {
             ) {
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
-                    text = "UID获取",
+                    text = "游戏助手",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -126,7 +126,7 @@ class MainActivity : VpnPrepareActivity() {
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "启动代理",
+                        text = "启动助手",
                         modifier = Modifier.weight(1f),
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -151,7 +151,7 @@ class MainActivity : VpnPrepareActivity() {
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "捕获到的 UID",
+                            text = "获取到的UID",
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
