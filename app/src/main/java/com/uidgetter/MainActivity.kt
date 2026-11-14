@@ -166,10 +166,11 @@ class MainActivity : VpnPrepareActivity() {
                     Spacer(modifier = Modifier.width(12.dp))
                     Button(
                         onClick = {
-                            if (uid.isNullOrBlank()) {
+                            val currentUid = uid
+                            if (currentUid.isNullOrBlank()) {
                                 Toast.makeText(context, "暂无可复制的 UID", Toast.LENGTH_SHORT).show()
                             } else {
-                                val encrypted = UidState.xorEncrypt(uid)
+                                val encrypted = UidState.xorEncrypt(currentUid)
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 cm.setPrimaryClip(ClipData.newPlainText("UID", encrypted))
                                 Toast.makeText(context, "已复制加密 UID", Toast.LENGTH_SHORT).show()
