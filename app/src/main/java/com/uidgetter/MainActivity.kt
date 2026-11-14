@@ -91,8 +91,6 @@ class MainActivity : VpnPrepareActivity() {
         val context = LocalContext.current
         val uid by UidState.uid.collectAsState()
         val status by proxyStatusState.collectAsState()
-        val lastUrl by UidState.lastUrl.collectAsState()
-        val lastRawBody by UidState.lastRawBody.collectAsState()
 
         Box(
             modifier = Modifier
@@ -177,28 +175,6 @@ class MainActivity : VpnPrepareActivity() {
                         }
                     ) {
                         Text("复制")
-                    }
-                }
-
-                // 调试信息
-                if (lastUrl != null || lastRawBody != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
-                            .padding(16.dp)
-                    ) {
-                        if (lastUrl != null) {
-                            Text("最近URL:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-                            Text(lastUrl!!, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                        if (lastRawBody != null) {
-                            Text("响应体:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-                            Text(lastRawBody!!, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
-                        }
                     }
                 }
             }
