@@ -89,7 +89,6 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
                 }
             }
         }
-        }
         super.onResponseFinished(chain, session, index)
     }
 
