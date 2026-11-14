@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -38,7 +40,6 @@ import top.sankokomi.wirebare.kernel.common.ImportantEvent
 import top.sankokomi.wirebare.kernel.common.ProxyStatus
 import top.sankokomi.wirebare.kernel.common.VpnPrepareActivity
 import top.sankokomi.wirebare.kernel.common.WireBare
-import top.sankokomi.wirebare.kernel.common.WireBareHelper
 
 class MainActivity : VpnPrepareActivity() {
 
@@ -90,27 +91,31 @@ class MainActivity : VpnPrepareActivity() {
         val context = LocalContext.current
         val uid by UidState.uid.collectAsState()
         val status by proxyStatusState.collectAsState()
+        val lastUrl by UidState.lastUrl.collectAsState()
+        val lastRawBody by UidState.lastRawBody.collectAsState()
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
+                Spacer(modifier = Modifier.height(40.dp))
                 Text(
                     text = "UID获取",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -134,7 +139,7 @@ class MainActivity : VpnPrepareActivity() {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -172,6 +177,28 @@ class MainActivity : VpnPrepareActivity() {
                         }
                     ) {
                         Text("复制")
+                    }
+                }
+
+                // 调试信息
+                if (lastUrl != null || lastRawBody != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+                            .padding(16.dp)
+                    ) {
+                        if (lastUrl != null) {
+                            Text("最近URL:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                            Text(lastUrl!!, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        if (lastRawBody != null) {
+                            Text("响应体:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                            Text(lastRawBody!!, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
+                        }
                     }
                 }
             }

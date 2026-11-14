@@ -43,6 +43,9 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
     ) {
         if (index == 0) {
             val url = session.response.url.orEmpty()
+            // 记录最近看到的 URL（调试用）
+            if (url.isNotBlank()) UidState.lastUrl.value = url
+
             if (url.contains("checkLogin", ignoreCase = true)) {
                 val bos = ByteArrayOutputStream()
                 bodyBuffers[session.response.sequence] = bos
@@ -76,11 +79,16 @@ class UidInterceptor : AsyncHttpIndexedInterceptor() {
                 var body = bos.toByteArray()
                 body = dechunk(body)
                 val text = body.toString(Charsets.UTF_8)
+                // 记录原始响应体（调试用）
+                UidState.lastRawBody.value = text.take(500)
+
                 val root = JSONObject(text)
                 val uid = root.optJSONObject("data")?.optString("uid").orEmpty()
                 if (uid.isNotBlank()) {
                     UidState.uid.value = uid
                 }
+            }.onFailure {
+                UidState.lastRawBody.value = "解析失败: ${it.message}\n原始: ${bos.toByteArray().toString(Charsets.UTF_8).take(300)}"
             }
         }
         super.onResponseFinished(chain, session, index)
